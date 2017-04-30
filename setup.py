@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-# Created by: python.exe -m py2exe wangcheck.py -W setup.py
+# Created by: python.exe -m py2exe Wangcheck.py -W setup.py
 
 from distutils.core import setup
 import py2exe
@@ -76,22 +76,22 @@ manifest_template = '''<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 
 
 
-wangcheck = Target(
+Wangcheck = Target(
     # We can extend or override the VersionInfo of the base class:
     # version = "1.0",
     # file_description = "File Description",
     # comments = "Some Comments",
     # internal_name = "spam",
 
-    script="wangcheck.py", # path of the main script
+    script="Wangcheck.py", # path of the main script
 
-    # Allows to specify the basename of the executable, if different from 'wangcheck'
-    # dest_base = "wangcheck",
+    # Allows to specify the basename of the executable, if different from 'Wangcheck'
+    # dest_base = "Wangcheck",
 
     # Icon resources:[(resource_id, path to .ico file), ...]
-    # icon_resources=[(1, r"wangcheck.ico")]
+    # icon_resources=[(1, r"Wangcheck.ico")]
 
-    other_resources = [(RT_MANIFEST, 1, (manifest_template % dict(prog="wangcheck", level="asInvoker")).encode("utf-8")),
+    other_resources = [(RT_MANIFEST, 1, (manifest_template % dict(prog="Wangcheck", level="asInvoker")).encode("utf-8")),
     # for bitmap resources, the first 14 bytes must be skipped when reading the file:
     #                    (RT_BITMAP, 1, open("bitmap.bmp", "rb").read()[14:]),
                       ]
@@ -155,7 +155,7 @@ py2exe_options = dict(
 
 setup(name="name",
       # console based executables
-      console=[wangcheck],
+      console=[Wangcheck],
 
       # windows subsystem executables (no console)
       windows=[],

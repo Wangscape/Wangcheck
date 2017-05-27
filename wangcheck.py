@@ -104,12 +104,15 @@ class Wangcheck(object):
     self.check_images()
     self.load_metaoutput()
     self.check_metaoutput()
+def print_usage():
+  print("Usage: python wangcheck.py path/to/options.json path/to/Wangscape/doc/schemas")
 
 if __name__ == '__main__':
   try:
     _, options_path, schema_dir = sys.argv
   except ValueError:
-    print("Usage: python wangcheck.py path/to/options.json path/to/Wangscape/doc/schemas")
+    print_usage()
+    raise
   config_dir, options_fn = path.split(options_path)
   wc = Wangcheck(config_dir, options_fn, schema_dir)
   wc.check_all()

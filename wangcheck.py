@@ -12,12 +12,18 @@ class Wangcheck(object):
     return path.join(self.config_dir, filename)
   def schema_file_path(self, filename):
     return path.join(self.schema_dir, filename)
+  def output_file_path(self, filename):
+    return path.join(self.config_file_path(self.options['OutputDirectory']), filename)
   def loadf(self, fn):
     with open(fn) as f:
       return load(f)
   def load_schemas(self):
     self.schema_options = self.loadf(self.schema_file_path('options_schema.json'))
     self.schema_module_group = self.loadf(self.schema_file_path('module_group_schema.json'))
+    self.schema_tiles = self.loadf(self.schema_file_path('tiles_schema.json'))
+    self.schema_tilesets = self.loadf(self.schema_file_path('tilesets_schema.json'))
+    self.schema_tile_groups = self.loadf(self.schema_file_path('tile_groups_schema.json'))
+    self.schema_terrain_hypergraph = self.loadf(self.schema_file_path('terrain_hypergraph_schema.json'))
   def load_options(self):
     self.options = self.loadf(self.config_file_path(self.options_fn))
   def load_module_groups(self):
@@ -41,8 +47,15 @@ class Wangcheck(object):
             print("Error in {0}:\n".format(mg_fn))
             raise
   def check_schemas(self):
-    Draft4Validator.check_schema(self.schema_options)
-    Draft4Validator.check_schema(self.schema_module_group)
+    for schema in [
+      self.schema_options,
+      self.schema_module_group,
+      self.schema_tiles,
+      self.schema_tilesets,
+      self.schema_tile_groups,
+      self.schema_terrain_hypergraph
+    ]:
+      Draft4Validator.check_schema(schema)
   def check_options(self):
     validate(self.options, self.schema_options)
   def check_module_groups(self):
@@ -59,6 +72,28 @@ class Wangcheck(object):
     for terrain in self.options['Terrains'].values():
       filename = terrain['FileName']
       assert path.exists(self.config_file_path(filename)),"Image not found: {0}\n".format(filename)
+  def load_metaoutput(self):
+    tiles_fn = self.output_file_path(self.options['MetaOutput']['TileData'])
+    tile_groups_fn = self.output_file_path(self.options['MetaOutput']['TileGroups'])
+    tilesets_fn = self.output_file_path(self.options['MetaOutput']['TilesetData'])
+    terrain_hypergraph_fn = self.output_file_path(self.options['MetaOutput']['TerrainHypergraph'])
+    if path.exists(tiles_fn):
+      self.tiles = self.loadf(tiles_fn)
+    if path.exists(tile_groups_fn):
+      self.tile_groups = self.loadf(tile_groups_fn)
+    if path.exists(tilesets_fn):
+      self.tilesets = self.loadf(tilesets_fn)
+    if path.exists(terrain_hypergraph_fn):
+      self.terrain_hypergraph = self.loadf(terrain_hypergraph_fn)
+  def check_metaoutput(self):
+    if hasattr(self, 'tiles'):
+      validate(self.tiles, self.schema_tiles)
+    if hasattr(self, 'tile_groups'):
+      validate(self.tile_groups, self.schema_tile_groups)
+    if hasattr(self, 'tilesets'):
+      validate(self.tilesets, self.schema_tilesets)
+    if hasattr(self, 'terrain_hypergraph'):
+      validate(self.terrain_hypergraph, self.schema_terrain_hypergraph)
   def check_all(self):
     self.load_schemas()
     self.check_schemas()
@@ -67,6 +102,8 @@ class Wangcheck(object):
     self.load_module_groups()
     self.check_module_groups()
     self.check_images()
+    self.load_metaoutput()
+    self.check_metaoutput()
 
 if __name__ == '__main__':
   try:

@@ -27,4 +27,4 @@ setup(  name = "Wangcheck",
         version = "0.1",
         description = "Validate JSON configuration files for Wangscape",
         options = {"build_exe": build_exe_options},
-        executables = [Executable("Wangcheck.py", base=base)])
+        executables = [Executable("wangcheck.py", base=base)])

@@ -1,6 +1,6 @@
 echo Please ensure PYTHON is set to the directory of Python installation at version 3.6.
-set OLD_PATH=%PATH%
-PATH=%PYTHON%;%PYTHON%\Scripts;%PATH%
+$env:OldPath = $env:Path
+$env:Path += ";$env:PYTHON;$env:PYTHON\Scripts"
 python --version
 pip --version
 pip install cx_Freeze
@@ -13,4 +13,4 @@ Start-FileDownload "https://bitbucket.org/ericvsmith/toposort/raw/default/LICENS
 Start-FileDownload "https://bitbucket.org/ericvsmith/toposort/raw/default/NOTICE" -FileName "Wangcheck\licenses\NOTICE_toposort.txt"
 7z a Wangcheck.zip Wangcheck
 cd ..
-PATH=%OLD_PATH%
+$env:Path=$OldPath

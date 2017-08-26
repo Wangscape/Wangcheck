@@ -5,7 +5,7 @@ branches:
 environment:
   PYTHON: C:\Python36
 build_script:
-  - ps: .\package.ps2
+  - ps: .\package.ps1
 artifacts:
 - path: build\Wangcheck.zip
   name: Wangcheck executable package

@@ -1,6 +1,6 @@
 echo Please ensure PYTHON is set to the directory of Python installation at version 3.6.
 $env:OldPath = $env:Path
-$env:Path += ";$env:PYTHON;$env:PYTHON\Scripts"
+$env:Path = "$env:PYTHON;$env:PYTHON\Scripts;$env:OldPath"
 python --version
 pip --version
 pip install cx_Freeze

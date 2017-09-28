@@ -87,6 +87,8 @@ class Wangcheck(object):
             source_modules.add(source)
           else:
             source_modules.update(source)
+      if module_id in source_modules:
+        raise CircularDependencyError({module_id:{module_id}})
       module_dependencies[module_id] = source_modules
     try:
       list(toposort(module_dependencies))

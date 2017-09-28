@@ -82,7 +82,11 @@ class Wangcheck(object):
       for source_type in ["SourceModule","SourceModules","ControlModule","DisplaceModules",
                           "XDisplaceModule","YDisplaceModule","ZDisplaceModule"]:
         if source_type in module:
-          source_modules.update(module[source_type])
+          source = module[source_type]
+          if type(source) is str:
+            source_modules.add(source)
+          else:
+            source_modules.update(source)
       module_dependencies[module_id] = source_modules
     try:
       list(toposort(module_dependencies))

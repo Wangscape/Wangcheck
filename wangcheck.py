@@ -2,6 +2,7 @@ from jsonschema import validate, Draft4Validator, ValidationError
 from json import load, JSONDecodeError
 from os import path
 import sys
+from toposort import toposort, CircularDependencyError
 
 class Wangcheck(object):
   def __init__(self, config_dir, options_fn, schema_dir):
@@ -69,8 +70,31 @@ class Wangcheck(object):
     self.try_validate(self.combiner_module_group, self.schema_module_group, self.combiner_module_group_fn, "combiner module group")
     if 'inputmodules' not in self.combiner_module_group:
       print("Warning: combiner module group requires three input modules")
+    
+    self.check_module_dependencies(self.combiner_module_group, self.combiner_module_group_fn)
     for fn, mg in self.source_modules.items():
       self.try_validate(mg, self.schema_module_group, fn, "module group")
+      self.check_module_dependencies(mg, fn)
+  def check_module_dependencies(self, module_group, filename):
+    module_dependencies = {}
+    for module_id, module in module_group["modules"].items():
+      source_modules = set()
+      for source_type in ["SourceModule","SourceModules","ControlModule","DisplaceModules",
+                          "XDisplaceModule","YDisplaceModule","ZDisplaceModule"]:
+        if source_type in module:
+          source = module[source_type]
+          if type(source) is str:
+            source_modules.add(source)
+          else:
+            source_modules.update(source)
+      if module_id in source_modules:
+        raise CircularDependencyError({module_id:{module_id}})
+      module_dependencies[module_id] = source_modules
+    try:
+      list(toposort(module_dependencies))
+    except CircularDependencyError:
+      print("Error in {0}:".format(filename))
+      raise
   def check_images(self):
     for terrain in self.options['Terrains'].values():
       filename = terrain['FileName']

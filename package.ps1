@@ -1,4 +1,4 @@
-echo Please ensure PYTHON is set to the directory of Python installation at version 3.6.
+echo "Please ensure PYTHON is set to the directory of Python installation at version 3.6."
 $env:OldPath = $env:Path
 $env:Path = "$env:PYTHON;$env:PYTHON\Scripts;$env:OldPath"
 python --version
@@ -13,4 +13,4 @@ Start-FileDownload "https://bitbucket.org/ericvsmith/toposort/raw/default/LICENS
 Start-FileDownload "https://bitbucket.org/ericvsmith/toposort/raw/default/NOTICE" -FileName "Wangcheck\licenses\NOTICE_toposort.txt"
 7z a Wangcheck.zip Wangcheck
 cd ..
-$env:Path=$OldPath
+$env:Path=$env:OldPath
